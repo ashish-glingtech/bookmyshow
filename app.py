@@ -44,7 +44,7 @@ def get_login(name):
     
   return jsonify({'message':'data not found'})
 
-from models import db, User, Movie, Theater
+from models import db, User, Movie, Theater, Screen, Booking, Payment
 
 db.init_app(app)
 
@@ -52,7 +52,7 @@ db.init_app(app)
 def create_login():
   body_data=request.get_json()
   #result.append(body_data)
-  user=User(name=body_data['name'],gender=body_data['gender'],age=body_data['age'],email=body_data['email'],phone_no=body_data['phone_no'])
+  user=User(name=body_data['name'], gender=body_data['gender'], age=body_data['age'], email=body_data['email'], phone_no=body_data['phone_no'])
   db.session.add(user)
   db.session.commit()
  
@@ -63,8 +63,8 @@ def create_login():
 @app.route('/movies', methods=['POST'])
 def add_movie():
   data = request.get_json()
-  movie=Movie(name=data['name'],descr =data['descr'],duration=data['duration'],language=data['language'],movie_type=data['movie_type'])
-  print(movie)
+  movie=Movie(name=data['name'],  descr =data['descr'], duration=data['duration'],  language=data['language'], movie_type=data['movie_type'])
+
   db.session.add(movie)
   db.session.commit()
  
@@ -76,23 +76,45 @@ def add_movie():
 def add_theater():
   data = request.get_json()
   theater=Theater(name=data['name'],location =data['location'],rating=data['rating'],phone_no=data['phone_no'])
-  print(theater)
+  
   db.session.add(theater)
   db.session.commit()
  
   return jsonify({"message":"Theater Add succesfull"})
 
+
+@app.route('/screen', methods=['POST'])
+def add_screen():
+  data = request.get_json()
+  screen=Screen(name=data['name'], movie_id =data['movie_id'],theater_id=data['theater_id'],ticket_type=data['ticket_type'],total_seats=data['total_seats'])
+
+  db.session.add(screen)
+  db.session.commit()
+ 
+  return jsonify({"message":"Screen Add succesfull"})
 
 
 @app.route('/booking', methods=['POST'])
 def add_booking():
   data = request.get_json()
-  theater=Theater(name=data['name'],location =data['location'],rating=data['rating'],phone_no=data['phone_no'])
-  print(theater)
-  db.session.add(theater)
+  booking=Booking(screen_id=data['screen_id'],user_id =data['user_id'],booking_no=data['booking_no'],date =data['date'],start_time=data['start_time'],end_time=data['end_time'],payment=data['payment'],status=data['status'])
+  print(booking)
+  db.session.add(booking)
   db.session.commit()
  
-  return jsonify({"message":"Theater Add succesfull"})
+  return jsonify({"message":"Booking Add succesfull"})
+
+
+@app.route('/payment', methods=['POST'])
+def add_payment():
+  data = request.get_json()
+  payment=Payment(payment_type =data['payment_type'],booking_id =data['booking_id'],user_id=data['user_id'],amount =data['amount'],date=data['date'])
+  print(payment)
+  db.session.add(payment)
+  db.session.commit()
+ 
+  return jsonify({"message":"Payment Add succesfull"})
+
 
 if __name__ == "__main__":
 

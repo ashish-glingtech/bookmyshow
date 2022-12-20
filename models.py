@@ -14,6 +14,8 @@ class User(db.Model):
     age=db.Column(db.Integer,nullable=False)
     email= db.Column(db.String(200),nullable=False)
     phone_no = db.Column(db.String(300),nullable=False)
+    booking = db.relationship('Booking', backref='User', lazy='dynamic')
+    payment = db.relationship('Payment', backref='User', lazy='dynamic')
    
     
 
@@ -27,6 +29,7 @@ class Movie(db.Model):
     duration=db.Column(db.String(100),nullable=False)
     language= db.Column(db.String(50),nullable=False)
     movie_type = db.Column(db.String(50),nullable=False)
+    screen = db.relationship('Screen', backref='movie', lazy='dynamic')
    
     def __repr__(self) -> str:
         return f"{self.name}"
@@ -37,22 +40,47 @@ class Theater(db.Model):
     location=db.Column(db.String(100),nullable=False)
     rating= db.Column(db.String(50),nullable=False)
     phone_no = db.Column(db.Integer,nullable=False)
+    screen = db.relationship('Screen', backref='theater', lazy='dynamic')
    
     def __repr__(self) -> str:
         return f"{self.name}"
 
+class Screen(db.Model):
+    id= db.Column(db.Integer,primary_key=True)
+    name= db.Column(db.String(50),nullable=False)
+    ticket_type=db.Column(db.String(100),nullable=False)
+    total_seats= db.Column(db.String(50),nullable=False)
+    movie_id = db.Column(db.Integer,db.ForeignKey('movie.id'))
+    theater_id = db.Column(db.Integer,db.ForeignKey('theater.id'))
+    booking = db.relationship('Booking', backref='Screen', lazy='dynamic')
+   
+    def __repr__(self) -> str:
+        return f"{self.name}"
 
 class Booking(db.Model):
     id= db.Column(db.Integer,primary_key=True)
-    screen_id= db.Column(db.Integer, db.ForeignKey('parent.id'))
-    user_id=db.Column(db.Integer,nullable=False)
+    screen_id= db.Column(db.Integer, db.ForeignKey('screen.id'))
+    user_id=db.Column(db.Integer,db.ForeignKey('user.id'))
     booking_no= db.Column(db.String(50),nullable=False)
     date = db.Column(db.Integer,nullable=False)
     start_time = db.Column(db.String(50),nullable=False)
     end_time  = db.Column(db.String(50),nullable=False)
     payment = db.Column(db.String(50),nullable=False)
     status  = db.Column(db.String(50),nullable=False)
+    payment = db.relationship('Payment', backref='Booking', lazy='dynamic')
     
    
     def __repr__(self) -> str:
-        return f"{self.name}"
+        return f"{self.id}"
+
+class Payment(db.Model):
+    id= db.Column(db.Integer,primary_key=True)
+    payment_type= db.Column(db.String(50),nullable=False)
+    booking_id= db.Column(db.Integer, db.ForeignKey('booking.id'))
+    user_id=db.Column(db.Integer,db.ForeignKey('user.id'))
+    amount= db.Column(db.Integer,nullable=False)
+    date = db.Column(db.Integer,nullable=False)
+
+
+    def __repr__(self) -> str:
+        return f"{self.id}"
