@@ -1,24 +1,77 @@
 from flask_restful import Resource, Api, request, reqparse
-from flask import jsonify, render_template
+from flask import jsonify, render_template, current_app #current_app import file in the app.py inside app.conig['secret_key'] 
 from models import db, User, Movie, Theater, Screen, Booking, Payment
 from validation import parser, theater1, screen_val, booking_val, payment_val
+from datetime import datetime, timedelta
+import jwt
+from functools import wraps
+#module of decorated
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = request.args.get('token')
+        if not token:
+            return jsonify({'message' : 'Token is missing'}), 403
+        try:
+            data = jwt.decode(token, current_app.config["SECRET_KEY"], algorithms=['HS256'])
+        except:
+            return jsonify({'message' : "Token is invalid"}), 403
+        return f(*args, **kwargs)
+    return decorated
 
 
+class Login(Resource):
+    """def get_all_user(self, id):
+        users = User.query.all() 
+        result = []   
+        for user in users:   
+            user_data = {}   
+            user_data['id'] = user.id  
+            user_data['name'] = user.name 
+            user_data['gender'] = user.gender 
+            user_data['age'] = user.age 
+            user_data['email'] = user.email 
+            user_data['phone_no'] = user.phone_no 
 
+            result.append(user_data)   
+
+        return jsonify({'users': result})
+"""
+    @token_required
+    def get(self, id):
+       
+        user = User.query.get(id)
+        if user is None:
+            return {'message': 'User not found'}, 401
+        return {'message': 'Welcome {}'.format(user.name)}
+
+#Verify the token
+class Verify(Resource):
+    def post(self):
+        token = jwt.encode({"some": "user name"}, current_app.config["SECRET_KEY"], algorithm="HS256",)
+        print(token)
+        try:
+            decoded_token = jwt.decode(token, current_app.config["SECRET_KEY"], algorithms=['HS256'])
+            return {'message': 'Token is valid'}, 200
+        except:
+            return {'message': 'Invalid token'}, 401
+        
+#User Module Are Here
 class Users(Resource):
     def post(self):
         body_data=request.get_json()
 
         user=User(name=body_data['name'], gender=body_data['gender'], age=body_data['age'],
-                email=body_data['email'], phone_no=body_data['phone_no'])
-
+                email=body_data['email'], phone_no=body_data['phone_no'], password=body_data['password'])
+        
         db.session.add(user)
         db.session.commit()
         return jsonify({"message" : "User Add succesfull"})
 
+
 #Movies Module Are Here
 class Movielist(Resource):
-
+    @token_required
     def get(self, id):
         movies = Movie.query.all()
         data = []
