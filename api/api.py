@@ -5,6 +5,7 @@ from validation import parser, theater1, screen_val, booking_val, payment_val
 from datetime import datetime, timedelta
 import jwt
 from functools import wraps
+from flask_openid import OpenID
 #module of decorated
 def token_required(f):
     @wraps(f)
@@ -44,6 +45,16 @@ class Login(Resource):
         if user is None:
             return {'message': 'User not found'}, 401
         return {'message': 'Welcome {}'.format(user.name)}
+
+
+def create_login(resp):
+    if resp.email is None or resp.email == "":
+        return {'message': 'Invalid login. Please try again.'}, 401
+    user = User.query.filter_by(email=resp.email).first()
+    if user is not None:
+        token = jwt.encode({"some": "user name"}, current_app.config["SECRET_KEY"], algorithm="HS256",)
+        return {'token': token.decode('utf-8')}, 200
+    return {'message': 'User not found'}, 401
 
 #Verify the token
 class Verify(Resource):
@@ -106,6 +117,15 @@ class Movielist(Resource):
 
 #Theater Module Are Here
 class Theaterlist(Resource):
+    def get(self, id):
+        theater = Theater.query.all()
+        data = []
+        for theater in theater:
+            data.append({'id':theater.id, 'Name': theater.name, "location": theater.location, 
+                        "rating":theater.rating,"phone_no":theater.phone_no, 
+                        })
+        return jsonify({"Theater":data})
+
     def post(self):
         data = theater1.parse_args()
         theater=Theater(name=data['name'], location=data['location'], rating=data['rating'],
@@ -114,9 +134,34 @@ class Theaterlist(Resource):
         db.session.commit()
         return jsonify({"message" : "Theater Add succesfull"})
 
+    def put(self,id):
+        data =Theater.query.filter(Theater.name=="GIP").first()
+        data.rating = '5 star'
+       
+        db.session.commit()
+        return jsonify({"message":"update Theater succesfull"},)
+
+
+    def delete(self,id):
+        data = Theater.query.filter(Theater.id==id).first()
+        db.session.delete(data)
+        db.session.commit()
+        return jsonify({"message":"Delete Theater succesfull"},)
+
 
 #Screen Module Are Here
 class Screenlist(Resource):
+
+    def get(self, id):
+        screen = Screen.query.all()
+        data = []
+        for screen in screen:
+            data.append({"id":screen.id, "movie_id": screen.movie_id, "theater_id": screen.theater_id,
+                        "nane":screen.name, "ticket_type":screen.ticket_type,
+                        "total_seats":screen.total_seats, 
+                        })
+        return jsonify({"Screen":data})
+
     def post(self):
         
         data = screen_val.parse_args()
@@ -127,13 +172,37 @@ class Screenlist(Resource):
         db.session.commit()
         return jsonify({"message" : "Screen Add succesfull"})
 
+    def put(self,id):
+        data =Screen.query.filter(Screen.id=="4").first()
+        data.name = 'Audi2'
+        db.session.commit()
+        return jsonify({"message":"update Screen succesfull"},)
+
+
+    def delete(self,id):
+        data = Screen.query.filter(Screen.id==id).first()
+        db.session.delete(data)
+        db.session.commit()
+        return jsonify({"message":"Delete Screen succesfull"},)
 
 #Booking Module Are Here
 class Bookinglist(Resource):
+
+    def get(self, id):
+        booking = Booking.query.all()
+        data = []
+        for booking in booking:
+            data.append({"id":booking.id, "screen_id": booking.screen_id, "user_id": booking.user_id,
+                        "booking_no":booking.booking_no, "date":booking.date,
+                        "start_time":booking.start_time, "end_time":booking.end_time,
+                        "payment":booking.payment, "status":booking.status
+                        })
+        return jsonify({"Booking":data})
+
     def post(self):
-        
+
         data = booking_val.parse_args()
-        
+
         booking=Booking(screen_id=data['screen_id'], user_id=data['user_id'], 
                         booking_no=data['booking_no'], date=data['date'], start_time=data['start_time'],
                         end_time=data['end_time'], payment=data['payment'], status=data['status'])
@@ -141,9 +210,29 @@ class Bookinglist(Resource):
         db.session.commit()
         return jsonify({"message" : "Booking Add succesfull"})
 
+    def put(self,id):
+        data =Booking.query.filter(Booking.booking_no =="BO002").first()
+        data.status  = 'Done'
+        db.session.commit()
+        return jsonify({"message":"update Booking succesfull"})
+
+
+    def delete(self,id):
+        data = Booking.query.filter(Booking.id==id).first()
+        db.session.delete(data)
+        db.session.commit()
+        return jsonify({"message":"Delete Booking succesfull"})
 
 #Payment Module Are Here
 class Paymentlist(Resource):
+    def get(self, id):
+        payment = Payment.query.all()
+        data = []
+        for payment in payment:
+            data.append({"id":payment.id, "payment_type": payment.payment_type, "booking_id": payment.booking_id,
+                        "user_id":payment.user_id, "amount":payment.amount, "date":payment.date,
+                        })
+        return jsonify({"Payment":data})
 
     def post(self):
         #data = request.get_json()
@@ -154,3 +243,17 @@ class Paymentlist(Resource):
         db.session.add(payment)
         db.session.commit()
         return jsonify({"message" : "Payment Add succesfull"})
+
+    
+    def put(self,id):
+        data =Payment.query.filter(Payment.booking_id =="3").first()
+        data.amount  = '499'
+        db.session.commit()
+        return jsonify({"message":"update Payment succesfull"})
+
+
+    def delete(self,id):
+        data = Booking.query.filter(Payment.id==id).first()
+        db.session.delete(data)
+        db.session.commit()
+        return jsonify({"message":"Delete Payment succesfull"})
