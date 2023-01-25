@@ -13,6 +13,7 @@ class User(db.Model):
     age = db.Column(db.Integer, nullable=False)
     email = db.Column(db.String(200), nullable=False)
     phone_no = db.Column(db.String(300), nullable=False)
+    password = db.Column(db.String(300), nullable=False)
     booking = db.relationship('Booking', backref='User', lazy='dynamic')
     payment = db.relationship('Payment', backref='User', lazy='dynamic')
    
@@ -27,10 +28,13 @@ class Movie(db.Model):
     duration = db.Column(db.String(100),nullable=False)
     language = db.Column(db.String(50),nullable=False)
     movie_type = db.Column(db.String(50),nullable=False)
+    image = db.Column(db.String(100),nullable=False)
     screen = db.relationship('Screen', backref='movie', lazy='dynamic')
-   
+    actor = db.relationship('Actor', backref='movie', lazy='dynamic')
+    crew = db.relationship('Crew', backref='movie', lazy='dynamic')
+    
     def __repr__(self) -> str:
-        return f"{self.name}"
+        return f"<Movie {self.id}>"
 
 
 class Theater(db.Model):
@@ -68,7 +72,7 @@ class Booking(db.Model):
     end_time  = db.Column(db.String(50), nullable=False)
     payment = db.Column(db.String(50), nullable=False)
     status  = db.Column(db.String(50), nullable=False)
-    payment = db.relationship('Payment', backref='Booking', lazy='dynamic')
+    payments = db.relationship('Payment', backref='Booking', lazy='dynamic')
     
     def __repr__(self) -> str:
         return f"{self.id}"
@@ -81,6 +85,26 @@ class Payment(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     amount = db.Column(db.Integer, nullable=False)
     date = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self) -> str:
+        return f"{self.id}"
+
+class Actor(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    movie_id = db.Column(db.Integer, db.ForeignKey('movie.id'))
+    image = db.Column(db.String(100),nullable=False)
+    name = db.Column(db.String(50), nullable=False)
+    actor_type = db.Column(db.String(50), nullable=False)
+
+    def __repr__(self) -> str:
+        return f"{self.id}"
+
+class Crew(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    movie_id = db.Column(db.Integer, db.ForeignKey('movie.id'))
+    image = db.Column(db.String(100),nullable=False)
+    name = db.Column(db.String(50), nullable=False)
+    crew_type = db.Column(db.String(50), nullable=False)
 
     def __repr__(self) -> str:
         return f"{self.id}"

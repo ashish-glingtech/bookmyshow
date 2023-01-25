@@ -47,3 +47,20 @@ payment_val.add_argument('booking_id', type=int, required=True, help="Enter a va
 payment_val.add_argument('user_id', type=str, required=True, help="Enter a valid User Id")
 payment_val.add_argument('amount', type=str, required=True, help="Enter a valid Amount")
 payment_val.add_argument('date', type=str, required=True, help="Enter a valid Date")
+
+
+#Actor Add Validation Api
+actor_val = reqparse.RequestParser()
+actor_val.add_argument('name', type=str, required=True, help="Enter a valid Name")
+actor_val.add_argument('image', type=str, required=True, help="Enter a valid Image ")
+actor_val.add_argument('actor_type', type=str, required=True, help="Enter a valid Actor Type")
+actor_val.add_argument('movie_id', type=str, required=True, help="Enter a valid Movie Id")
+
+
+
+#Crew Add Validation Api
+crew_val = reqparse.RequestParser()
+crew_val.add_argument('name', type=str, required=True, help="Enter a valid Name")
+crew_val.add_argument('image', type=str, required=True, help="Enter a valid Image ")
+crew_val.add_argument('crew_type', type=str, required=True, help="Enter a valid Crew Type")
+crew_val.add_argument('movie_id', type=str, required=True, help="Enter a valid Movie Id")

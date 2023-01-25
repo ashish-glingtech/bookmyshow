@@ -1,11 +1,18 @@
 from flask_restful import Resource, Api, request, reqparse
 from flask import jsonify, render_template, current_app #current_app import file in the app.py inside app.conig['secret_key'] 
-from models import db, User, Movie, Theater, Screen, Booking, Payment
-from validation import parser, theater1, screen_val, booking_val, payment_val
+from models import db, User, Movie, Theater, Screen, Booking, Payment, Actor, Crew
+from validation import parser, theater1, screen_val, booking_val, payment_val, actor_val, crew_val
 from datetime import datetime, timedelta
 import jwt
 from functools import wraps
 from flask_openid import OpenID
+from werkzeug.utils import secure_filename
+import os
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+
+def allowed_file(filename):
+	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 #module of decorated
 def token_required(f):
     @wraps(f)
@@ -81,8 +88,30 @@ class Users(Resource):
 
 
 #Movies Module Are Here
+class Image(Resource):
+    def post():
+	# check if the post request has the file part
+        if 'file' not in request.files:
+            resp = jsonify({'message' : 'No file part in the request'})
+            resp.status_code = 400
+            return resp
+        file = request.files['file']
+        if file.filename == '':
+            resp = jsonify({'message' : 'No file selected for uploading'})
+            resp.status_code = 400
+            return resp
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
+            resp = jsonify({'message' : 'File successfully uploaded'})
+            resp.status_code = 201
+            return resp
+        else:
+            resp = jsonify({'message' : 'Allowed file types are txt, pdf, png, jpg, jpeg, gif'})
+            resp.status_code = 400
+            return resp
 class Movielist(Resource):
-    @token_required
+    #@token_required
     def get(self, id):
         movies = Movie.query.all()
         data = []
@@ -94,6 +123,8 @@ class Movielist(Resource):
 
     def post(self):
         data = parser.parse_args()
+        print(data)
+        
         movie=Movie(name=data['name'], descr=data['descr'], duration=data['duration'],
                     language=data['language'], movie_type=data['movie_type'], image=data['image'])
         db.session.add(movie)
@@ -257,3 +288,71 @@ class Paymentlist(Resource):
         db.session.delete(data)
         db.session.commit()
         return jsonify({"message":"Delete Payment succesfull"})
+
+#Actor Module Are Here
+class Actorlist(Resource):
+    def get(self, id):
+        actor = Actor.query.all()
+        data = []
+        for actor in actor:
+            data.append({"id":actor.id, "name": actor.name, "image": actor.image,
+                        "actor_type":actor.actor_type, "movie_id":actor.movie_id,
+                        })
+        return jsonify({"Payment":data})
+
+    def post(self):
+        #data = request.get_json()
+        data = actor_val.parse_args()
+        actor = Actor(name=data['name'], image=data['image'],
+                          actor_type=data['actor_type'], movie_id=data['movie_id'])
+        db.session.add(actor)
+        db.session.commit()
+        return jsonify({"message" : "Actor Add succesfull"})
+
+    def put(self,id):
+        data =Actor.query.filter(Actor.id =="1").first()
+        data.name  = 'shahrukh'
+        db.session.commit()
+        return jsonify({"message":"update Actor succesfull"})
+
+
+    def delete(self,id):
+        data = Actor.query.filter(Actor.id==id).first()
+        db.session.delete(data)
+        db.session.commit()
+        return jsonify({"message":"Delete Actor succesfull"})
+
+
+#Crew Module Are Here
+class Crewlist(Resource):
+    def get(self, id):
+        crew = Crew.query.all()
+        data = [] 
+        for crew in crew:
+            data.append({"id":crew.id, "name": crew.name, "image": crew.image,
+                        "crew_type":crew.crew_type, "movie_id":crew.movie_id,
+                        })
+        return jsonify({"Payment":data})
+
+    def post(self):
+        #data = request.get_json()
+        data = crew_val.parse_args()
+
+        crew = Crew(name=data['name'], image=data['image'],
+                          crew_type=data['crew_type'], movie_id=data['movie_id'])
+        db.session.add(crew)
+        db.session.commit()
+        return jsonify({"message" : "Crew Add succesfull"})
+
+    def put(self,id):
+        data =Crew.query.filter(Crew.id =="1").first()
+        data.name  = 'Bosco Caeser'
+        db.session.commit()
+        return jsonify({"message":"update Crew succesfull"})
+
+
+    def delete(self,id):
+        data = Crew.query.filter(Crew.id==id).first()
+        db.session.delete(data)
+        db.session.commit()
+        return jsonify({"message":"Delete Crew succesfull"})
