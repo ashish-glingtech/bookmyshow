@@ -89,27 +89,17 @@ class Users(Resource):
 
 #Movies Module Are Here
 class Image(Resource):
-    def post():
+    def post(self):
 	# check if the post request has the file part
         if 'file' not in request.files:
-            resp = jsonify({'message' : 'No file part in the request'})
-            resp.status_code = 400
-            return resp
+            return jsonify({'error' : 'No file part in the request'}), 400
         file = request.files['file']
-        if file.filename == '':
-            resp = jsonify({'message' : 'No file selected for uploading'})
-            resp.status_code = 400
-            return resp
+        
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
-            resp = jsonify({'message' : 'File successfully uploaded'})
-            resp.status_code = 201
-            return resp
-        else:
-            resp = jsonify({'message' : 'Allowed file types are txt, pdf, png, jpg, jpeg, gif'})
-            resp.status_code = 400
-            return resp
+        return jsonify({'message' : 'File successfully uploaded'})
+            
 class Movielist(Resource):
     #@token_required
     def get(self, id):
@@ -302,9 +292,16 @@ class Actorlist(Resource):
 
     def post(self):
         #data = request.get_json()
+        
         data = actor_val.parse_args()
+        if data.image:
+            image=data.image
+            print(image)
+        image.save(os.path.join(current_app.config["UPLOAD_FOLDER"], secure_filename(image.filename)))
         actor = Actor(name=data['name'], image=data['image'],
                           actor_type=data['actor_type'], movie_id=data['movie_id'])
+                          
+        
         db.session.add(actor)
         db.session.commit()
         return jsonify({"message" : "Actor Add succesfull"})
@@ -337,7 +334,10 @@ class Crewlist(Resource):
     def post(self):
         #data = request.get_json()
         data = crew_val.parse_args()
-
+        if data.image:
+            image=data.image
+            print(image)
+        image.save(os.path.join(current_app.config["UPLOAD_FOLDER"], secure_filename(image.filename)))
         crew = Crew(name=data['name'], image=data['image'],
                           crew_type=data['crew_type'], movie_id=data['movie_id'])
         db.session.add(crew)
