@@ -17,8 +17,8 @@ api.add_resource(Theaterlist, '/theater/<id>')
 api.add_resource(Screenlist, '/screen/<id>')
 api.add_resource(Bookinglist, '/booking/<id>')
 api.add_resource(Paymentlist, '/payment/<id>')
-api.add_resource(Actorlist, '/actor/<id>')
-api.add_resource(Crewlist, '/crew/<id>')
+api.add_resource(Actorlist, '/actor/')
+api.add_resource(Crewlist, '/crew/')
 
 
 

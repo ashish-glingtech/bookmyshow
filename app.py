@@ -4,7 +4,7 @@ from flask import render_template
 import jwt
 from models import db
 
-UPLOAD_FOLDER = 'home/ankursingh/demo4/static/img'
+UPLOAD_FOLDER = '/home/ankursingh/demo4/static/img'
 app = Flask(__name__)
 
 
