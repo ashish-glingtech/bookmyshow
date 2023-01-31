@@ -1,5 +1,8 @@
 venv/
-
-
-
-
+templates/
+views/
+static/css/
+static/js/
+static/lib/
+templates/
+__pycache__/
