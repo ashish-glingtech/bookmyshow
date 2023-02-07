@@ -64,3 +64,8 @@ crew_val.add_argument('name', type=str, required=True, help="Enter a valid Name"
 crew_val.add_argument('image', type=werkzeug.datastructures.FileStorage, required=True, help="Enter a valid Image ", location='files')
 crew_val.add_argument('crew_type', type=str, required=True, help="Enter a valid Crew Type", location='form') 
 crew_val.add_argument('movie_id', type=str, required=True, help="Enter a valid Movie Id", location='form')
+
+
+#Otp Add Validation Api
+otp_val = reqparse.RequestParser()
+otp_val.add_argument('phone_number', type=int, required=True, help="Enter a valid Number", location='form')

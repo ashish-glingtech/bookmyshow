@@ -1,23 +1,69 @@
 from flask_restful import Resource, Api, request, reqparse
 from flask import jsonify, render_template, current_app #current_app import file in the app.py inside app.conig['secret_key'] 
-from models import db, User, Movie, Theater, Screen, Booking, Payment, Actor, Crew
-from validation import parser, theater1, screen_val, booking_val, payment_val, actor_val, crew_val
+from models import db, User, Movie, Theater, Screen, Booking, Payment, Actor, Crew, Otp
+from validation import parser, theater1, screen_val, booking_val, payment_val, actor_val, crew_val, otp_val
 from datetime import datetime, timedelta
 import jwt
 from functools import wraps
 from flask_openid import OpenID
 from werkzeug.utils import secure_filename
 import os
+from twilio.rest import Client
+import jwt
+import random
+import string
+
+
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 def allowed_file(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+# Your Twilio account SID and Auth Token
+account_sid = "ACcd3cd99aacd0879d7f1067546ca30581"
+auth_token = "a3bb3a7708a22f39817dfbbf4f747822"
+
+# Create a Twilio client
+client = Client(account_sid, auth_token)
+
+
+class Otplist(Resource):
+    def post(self):
+        data = otp_val.parse_args()
+        otp_gen = ''.join(random.choices(string.digits, k=6))
+        tp=Otp(phone_number=data['phone_number'], otp=otp_gen)
+        # Send an SMS message with the OTP
+        message = client.messages.create(
+            to="+91" + str(data['phone_number']), # Your recipient's phone number
+            from_="+14782495642", # Your Twilio phone number
+            body=f"Your OTP is: {otp_gen}"
+        )
+
+        db.session.add(tp)
+        db.session.commit()
+        return "Verification code sent!", 200
+
+class Otpverify(Resource):
+    def post(self):
+        data = request.get_json()
+        phone_number = data.get('phone_number')
+        otp = data.get('otp')
+        user = Otp.query.filter_by(phone_number=phone_number).first()
+        if not user:
+            return {'message': 'User phone number not found.'}, 404
+        if user.otp != otp:
+            return {'message': 'Incorrect Otp.'}, 401
+        token = jwt.encode({'user_id': user.otp_id, 'phone_number': user.phone_number}, current_app.config["SECRET_KEY"])
+        print(token)
+        #return {'token': token}, 200
+        return {'message': 'Login successful.'}, 200
+        
 #module of decorated
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = request.args.get('token')
+        
         if not token:
             return jsonify({'message' : 'Token is missing'}), 403
         try:
@@ -45,7 +91,7 @@ class Login(Resource):
 
         return jsonify({'users': result})
 """
-    @token_required
+    #@token_required
     def get(self, id):
        
         user = User.query.get(id)
@@ -54,25 +100,25 @@ class Login(Resource):
         return {'message': 'Welcome {}'.format(user.name)}
 
 
-def create_login(resp):
-    if resp.email is None or resp.email == "":
-        return {'message': 'Invalid login. Please try again.'}, 401
-    user = User.query.filter_by(email=resp.email).first()
-    if user is not None:
-        token = jwt.encode({"some": "user name"}, current_app.config["SECRET_KEY"], algorithm="HS256",)
-        return {'token': token.decode('utf-8')}, 200
-    return {'message': 'User not found'}, 401
+# def create_login(resp):
+#     if resp.email is None or resp.email == "":
+#         return {'message': 'Invalid login. Please try again.'}, 401
+#     user = User.query.filter_by(email=resp.email).first()
+#     if user is not None:
+#         token = jwt.encode({"some": "user name"}, current_app.config["SECRET_KEY"], algorithm="HS256",)
+#         return {'token': token.decode('utf-8')}, 200
+#     return {'message': 'User not found'}, 401
 
 #Verify the token
-class Verify(Resource):
-    def post(self):
-        token = jwt.encode({"some": "user name"}, current_app.config["SECRET_KEY"], algorithm="HS256",)
-        print(token)
-        try:
-            decoded_token = jwt.decode(token, current_app.config["SECRET_KEY"], algorithms=['HS256'])
-            return {'message': 'Token is valid'}, 200
-        except:
-            return {'message': 'Invalid token'}, 401
+#class Verify(Resource):
+   # def post(self):
+        # token = jwt.encode({"some": "user name"}, current_app.config["SECRET_KEY"], algorithm="HS256",)
+        # print(token)
+        # try:
+        #     decoded_token = jwt.decode(token, current_app.config["SECRET_KEY"], algorithms=['HS256'])
+        #     return {'message': 'Token is valid'}, 200
+        # except:
+        #     return {'message': 'Invalid token'}, 401
         
 #User Module Are Here
 class Users(Resource):
@@ -101,7 +147,7 @@ class Image(Resource):
         return jsonify({'message' : 'File successfully uploaded'})
             
 class Movielist(Resource):
-    #@token_required
+    @token_required
     def get(self, id):
         movies = Movie.query.all()
         data = []
