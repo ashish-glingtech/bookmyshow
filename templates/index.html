@@ -1,1 +1,38 @@
-<h1>Welcome </h1>
+{% extends 'base.html' %}
+
+{% block content %}
+<body>
+   
+<div class="container mt-3">
+  <h2>Movies</h2>
+  <p>The movies list</p>            
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Details</th>
+        <th>duration</th>
+        <th>Language</th>
+        <th>Movie Type</th>
+        <th>Image</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for movie in movie_list %}
+            <tr>
+                <td>{{movie.id}}</td>
+                <td>{{movie.name}}</td>
+                <td>{{movie.descr}}</td>
+                <td>{{movie.duration}}</td>
+                <td>{{movie.language}}</td>
+                <td>{{movie.movie_type}}</td>
+                <td>{{movie.image}}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}
+

@@ -25,3 +25,4 @@ api.add_resource(Otpverify, '/otpverify/')
 
 
 
+#O9mQx4BVtGr7WZue0vfsha9wfHD__ALqGjPWTtJ1 data from twilo

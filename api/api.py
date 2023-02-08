@@ -12,6 +12,7 @@ from twilio.rest import Client
 import jwt
 import random
 import string
+import time
 
 
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
@@ -21,7 +22,7 @@ def allowed_file(filename):
 
 # Your Twilio account SID and Auth Token
 account_sid = "ACcd3cd99aacd0879d7f1067546ca30581"
-auth_token = "a3bb3a7708a22f39817dfbbf4f747822"
+auth_token = "4d79d27b15d4c5b516e0d16e98a1a620"
 
 # Create a Twilio client
 client = Client(account_sid, auth_token)
@@ -31,7 +32,8 @@ class Otplist(Resource):
     def post(self):
         data = otp_val.parse_args()
         otp_gen = ''.join(random.choices(string.digits, k=6))
-        tp=Otp(phone_number=data['phone_number'], otp=otp_gen)
+        timestamp = time.time()
+        tp=Otp(phone_number=data['phone_number'], otp=otp_gen, timestamp=timestamp)
         # Send an SMS message with the OTP
         message = client.messages.create(
             to="+91" + str(data['phone_number']), # Your recipient's phone number
@@ -48,13 +50,17 @@ class Otpverify(Resource):
         data = request.get_json()
         phone_number = data.get('phone_number')
         otp = data.get('otp')
-        user = Otp.query.filter_by(phone_number=phone_number).first()
+
+        #user = Otp.query.filter_by(phone_number=phone_number).first()
+        user = Otp.query.filter_by(phone_number=phone_number).order_by(Otp.timestamp.desc()).first()
         if not user:
             return {'message': 'User phone number not found.'}, 404
         if user.otp != otp:
             return {'message': 'Incorrect Otp.'}, 401
+        if time.time() - user.timestamp > 120: # OTP is valid for 120 seconds
+            return {'message': 'Otp expired'}, 401
         token = jwt.encode({'user_id': user.otp_id, 'phone_number': user.phone_number}, current_app.config["SECRET_KEY"])
-        print(token)
+        # print(token)
         #return {'token': token}, 200
         return {'message': 'Login successful.'}, 200
         

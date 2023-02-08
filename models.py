@@ -113,4 +113,7 @@ class Otp(db.Model):
     otp_id  = db.Column(db.Integer, primary_key=True)
     phone_number = db.Column(db.String(120), nullable=False)
     otp = db.Column(db.Integer,nullable=False)
+    timestamp = db.Column(db.Float, nullable=False)
+
+    
     
