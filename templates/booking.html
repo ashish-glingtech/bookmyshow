@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<body>
+   
+<div class="container mt-3">
+  <h2>Booking</h2>
+  <p>The Booking list</p>            
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>screen Name</th>
+        <th>User name</th>
+        <th>Booking No</th>
+        <th>Date</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for booking in booking_list %}
+            <tr>
+                <td>{{booking.id}}</td>
+                <td>{{booking.screen_id}}</td>
+                <td>{{booking.user_id}}</td>
+                <td>{{booking.booking_no}}</td>
+                <td>{{booking.date}}</td>
+                <td>{{booking.start_time}}</td>
+                <td>{{booking.end_time}}</td>
+                <td>{{booking.status}}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}
+
