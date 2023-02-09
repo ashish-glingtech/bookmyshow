@@ -22,7 +22,7 @@ def allowed_file(filename):
 
 # Your Twilio account SID and Auth Token
 account_sid = "ACcd3cd99aacd0879d7f1067546ca30581"
-auth_token = "4d79d27b15d4c5b516e0d16e98a1a620"
+auth_token = "541f13455ffee5d6439b988c6c578cf1"
 
 # Create a Twilio client
 client = Client(account_sid, auth_token)
@@ -44,6 +44,58 @@ class Otplist(Resource):
         db.session.add(tp)
         db.session.commit()
         return "Verification code sent!", 200
+
+    def put(self):
+        data = otp_val.parse_args()
+        phone_number = data.get('phone_number')
+        if phone_number is None:
+            return 'phone_number is required.', 400
+
+        otp = Otp.query.filter_by(phone_number=phone_number).first()
+        if otp is None:
+            return 'No OTP found for the specified user.', 404
+
+        otp_gen = ''.join(random.choices(string.digits, k=6))
+        timestamp = time.time()
+        tp=Otp(phone_number=data['phone_number'], otp=otp_gen, timestamp=timestamp)
+        # Send an SMS message with the OTP
+        message = client.messages.create(
+            to="+91" + str(data['phone_number']), # Your recipient's phone number
+            from_="+14782495642", # Your Twilio phone number
+            body=f"Your OTP is: {otp_gen}"
+        )
+
+        db.session.add(tp)
+        db.session.commit()
+        return "Verification code sent!", 200
+
+class Otprest(Resource):
+    def get(self):
+        data = otp_val.parse_args()
+        phone_number = data.get('phone_number')
+        print(phone_number)
+        result=Otp.query.filter_by(phone_number=phone_number).delete()
+        if phone_number is None:
+            return 'phone_number  is required.', 400
+       
+        db.session.add(result)
+        db.session.commit()
+        return Otplist()
+    # def reset_otp():
+    #     phone_number = request.args.get('phone_number')
+    #     print(phone_number)
+    #     new_otp = request.args.get('otp')
+    #     if phone_number is None or new_otp is None:
+    #         return 'User ID and new OTP value are required.', 400
+
+    #     otp = Otp.query.filter_by(phone_number=phone_number).first()
+    #     if otp is None:
+    #         return 'No OTP found for the specified user.', 404
+
+    #     otp.otp = new_otp
+    #     otp.timestamp = datetime.utcnow()
+    #     db.session.commit()
+
 
 class Otpverify(Resource):
     def post(self):
