@@ -23,9 +23,8 @@ app.register_blueprint(main_routes.main_bp, url_prefix='/')
 
 
 # Register `view` blueprints
-from views.movies import movie_view_bp
-
-app.register_blueprint(movie_view_bp, url_prefix='/')
+from views.routes import bp as views_bp
+app.register_blueprint(views_bp, url_prefix='/')
 
 
 if __name__ == "__main__":
