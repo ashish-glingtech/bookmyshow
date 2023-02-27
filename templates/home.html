@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <title>Book My Show</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <!-- Search Bar Navigation -->
+    <div class="search-bar-navigation">
+        <img src="/static/img/logo1.png" alt="Book My Show">
+        <div class="search-bar">
+            <input type="text" placeholder="Search for movies">
+            <i class="fa fa-search"></i>
+        </div>
+        <div class="city">
+            <select name="" id="">
+                <option value="Chennai">Chennai</option>
+                <option value="Mumbai">Mumbai</option>
+                <option value="Delhi">Delhi</option>
+                <option value="Banglore">Banglore</option>
+                <option value="Hyderabad">Hyderabad</option>
+                <option value="Ahmedabad">Ahmedabad</option>
+                <option value="Chandigarh">Chandigarh</option>
+                <option value="Pune">Pune</option>
+                <option value="Kolkata">Kolkata</option>
+                <option value="Kochi">Kochi</option>
+            </select>
+            <button type="button" onclick="signIn()">Sign in</button>
+        </div>
+    </div>
+    <!-- Search bar navigation End -->
+
+    <!-- Activities Bar -->
+    <div class="activities-bar">
+        <div class="activity">
+            <ul>
+                <li>Movies</li>
+                <li>Stream</li>
+                <li>Events</li>
+                <li>Plays</li>
+                <li>Sports</li>
+                <li>Activities</li>
+            </ul>
+        </div>
+        <div class="activity rhs">
+            <ul>
+                <li>List Your Shows</li>
+                <li>Corporates</li>
+                <li>Offers</li>
+                <li>Gift Cards</li>
+            </ul>
+        </div>
+    </div>
+    <!-- Activities Bar End -->
+
+    <!-- Filter By and Recommended movies -->
+
+    <div class="filter-by-and-recommended-movies">
+        <!-- Filter By -->
+        <div class="filter-by">
+            <div class="language">
+                <h5>Language</h5>
+                <ul>
+                    <li>
+                        <a for="">Tamil</a>
+                    </li>
+                    <li>
+                        <a for="">Hindi</a>
+                    </li>
+                    <li>
+                        <a for="">English</a>
+                    </li>
+                    <li>
+                        <a for="">Korean</a>
+                    </li>
+                    <li>
+                        <a for="">Telugu</a>
+                    </li>
+                    <li>
+                        <a for="">Malyalam</a>
+                    </li>
+                    <li>
+                        <a for="">Englishmax</a>
+                    </li>
+                    <li>
+                        <a for="">Assamese</a>
+                    </li>
+                    <li>
+                        <a for="">Kannada</a>
+                    </li>
+                    <li>
+                        <a for="">Gujarati</a>
+                    </li>
+                    <li>
+                        <a for="">Marathi</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="experience">
+                <h5>Experience</h5>
+                <ul>
+                    <li>
+                        <a for="">2D</a>
+                    </li>
+                    <li>
+                        <a for="">3D</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!-- Filter By End -->
+        <!-- All Movies -->
+        <div class="All-movies">
+            <h5>Recommended Movies</h5>
+            <!-- Movies -->
+            <div class="movies">
+                <div class="movie">
+                    <img src="/static/img/pathan.jpg" alt="Pathan">
+                    <div class="like">
+                        <i class="fa">&#xf087;</i>
+                        <span>1.3K likes</span>
+                    </div>
+                    <h5>Pathaan</h5>
+                    <span>Drama/Thriller</span>
+                </div>
+                <div class="movie">
+                    <img src="/static/img/shehzada.jpg" alt="Pathan">
+                    <div class="like">
+                        <i class="fa">&#xf087;</i>
+                        <span>1.3K likes</span>
+                    </div>
+                    <h5>Shehzada </h5>
+                    <span>Action/Thriller</span>
+                </div>
+                <div class="movie">
+                    <img src="/static/img/circus.webp" alt="Pathan">
+                    <div class="like">
+                        <i class="fa">&#xf087;</i>
+                        <span>1.3K likes</span>
+                    </div>
+                    <h5>Cirkus</h5>
+                    <span>Drama/Romatic</span>
+                </div>
+                <div class="movie">
+                    <img src="/static/img/brahmastra.jpeg" alt="Pathan">
+                    <div class="like">
+                        <i class="fa">&#xf087;</i>
+                        <span>1.3K likes</span>
+                    </div>
+                    <h5>Brahmastra</h5>
+                    <span>Drama/Romatic</span>
+                </div>
+                <div class="movie">
+                    <img src="/static/img/mission manju.jpeg" alt="Pathan">
+                    <div class="like">
+                        <i class="fa">&#xf087;</i>
+                        <span>1.3K likes</span>
+                    </div>
+                    <h5>Mission Manju</h5>
+                    <span>Drama/Romatic</span>
+                </div>
+                <div class="movie">
+                    <img src="/static/img/freddy.jpg" alt="Pathan">
+                    <div class="like">
+                        <i class="fa">&#xf087;</i>
+                        <span>1.3K likes</span>
+                    </div>
+                    <h5>Freddy</h5>
+                    <span>Drama/Romatic</span>
+                </div>
+                <div class="movie">
+                    <img src="/static/img/Michael.jpeg" alt="Pathan">
+                    <div class="like">
+                        <i class="fa">&#xf087;</i>
+                        <span>1.3K likes</span>
+                    </div>
+                    <h5>Freddy</h5>
+                    <span>Drama/Romatic</span>
+                </div>
+                <div class="movie">
+                    <img src="/static/img/woman king.jpeg" alt="Pathan">
+                    <div class="like">
+                        <i class="fa">&#xf087;</i>
+                        <span>1.3K likes</span>
+                    </div>
+                    <h5>Freddy</h5>
+                    <span>Drama/Romatic</span>
+                </div>
+                <div class="movie">
+                    <img src="/static/img/varisu.jpeg" alt="Pathan">
+                    <div class="like">
+                        <i class="fa">&#xf087;</i>
+                        <span>1.3K likes</span>
+                    </div>
+                    <h5>Freddy</h5>
+                    <span>Drama/Romatic</span>
+                </div>
+                <div class="movie">
+                    <img src="/static/img/writer padmabushan.jpeg" alt="Pathan">
+                    <div class="like">
+                        <i class="fa">&#xf087;</i>
+                        <span>1.3K likes</span>
+                    </div>
+                    <h5>Freddy</h5>
+                    <span>Drama/Romatic</span>
+                </div>
+                <div class="movie">
+                    <img src="/static/img/Almost Pyaar with DJ Mohabbat.jpg" alt="Pathan">
+                    <div class="like">
+                        <i class="fa">&#xf087;</i>
+                        <span>1.3K likes</span>
+                    </div>
+                    <h5>Freddy</h5>
+                    <span>Drama/Romatic</span>
+                </div>
+                <div class="movie">
+                    <img src="/static/img/Thunivu.jpeg" alt="Pathan">
+                    <div class="like">
+                        <i class="fa">&#xf087;</i>
+                        <span>1.3K likes</span>
+                    </div>
+                    <h5>Freddy</h5>
+                    <span>Drama/Romatic</span>
+                </div>
+            </div>
+            <!-- Movies End -->
+            <!-- Login -->
+            <!-- <div class="login">
+                <i class="fa fa-close"></i>
+                <h2>Get Started</h2>
+                <div class="continue-with-google-or-email">
+                    <div class="google-email-apple">
+                        <img src="./images/google_icon.jpeg" alt="Google"></img>
+                        <span>Continue with Google</span>
+                    </div>
+                    <div class="google-email-apple">
+                        <img src="./images/email_icon.webp" alt="Email">
+                        <span>Continue with Google</span>
+                    </div>
+                    <div class="google-email-apple">
+                        <img src="./images/apple_icon.png" alt="Apple">
+                        <span>Continue with Google</span>
+                    </div>
+                    <div class="or">
+                        <span>OR</span>
+                    </div>
+                    <div class="mobile-number">
+                        <img src="./images/flag_icon.png" alt="Flag">
+                        <span>+91</span>
+                        <span class="mobile-number-underline">Continue with mobile Number</span>
+                    </div>
+                    <div class="i-agree">
+                        <input type="checkbox">
+                        <p>I agree to the Terms & conditions & Privacy Policy</p>
+                    </div>
+                </div>
+            </div> -->
+        <!-- Login End-->
+        </div>
+        <!-- All Movies End -->
+    </div>
+
+    <!-- Login -->
+    <div class="login" id="login">
+        <i class="fa fa-close" onclick="closeSignIn()"></i>
+        <h2>Get Started</h2>
+        <div class="continue-with-google-or-email">
+            <div class="google-email-apple">
+                <img src="/static/img/google_icon.jpeg" alt="Google"></img>
+                <span>Continue with Google</span>
+            </div>
+            <div class="google-email-apple">
+                <img src="/static/img/email_icon.webp" alt="Email">
+                <span>Continue with Google</span>
+            </div>
+            <div class="google-email-apple">
+                <img src="/static/img/apple_icon.png" alt="Apple">
+                <span>Continue with Google</span>
+            </div>
+            <div class="or">
+                <span>OR</span>
+            </div>
+            <div class="mobile-number">
+                <img src="/static/img/flag_icon.png" alt="Flag">
+                <span>+91</span>
+                <input class="phone-number" id="phone-number" 
+                   placeholder="Continue with mobile Number" type="tel" maxlength="10"
+                   onkeyup="phoneNumberLogin()"></input>
+            </div>
+            <div class="i-agree">
+                <input type="checkbox" id="checkbox">
+                <p>I agree to the Terms & conditions & Privacy Policy</p>
+            </div>
+            <div class="continue">
+                <button id="continue" onclick="generateOtp()">Continue</button>
+            </div>
+        </div>
+    </div>
+    <!-- Login End-->
+
+    <!-- Otp -->
+
+    <div class="login otp otp-login" id="otp-login">
+        <h2>Verify your Mobile Number</h2>
+        <p>Enter OTP sent to +91 8122299805</p>
+        <div class="otp-number">
+            <div><input type="tel"></div>
+            <div><input type="tel"></div>
+            <div><input type="tel"></div>
+            <div><input type="tel"></div>
+            <div><input type="tel"></div>
+            <div><input type="tel"></div>
+        </div>
+        <p>Expect OTP in 23 seconds</p>
+    </div>
+
+    <!-- Otp End -->
+
+    <!-- Login End -->
+
+    <!-- Footer -->
+    <footer>
+        <div>
+            <h4>About</h4>
+            <div>
+                <p>Terms and Conditions</p>
+                <p>Privacy Policy</p>
+                <p>Purchase Policy</p>
+            </div>
+        </div>
+        <div>
+            <h4>Choose Language</h4>
+            <div>
+                <p>Malyalam</p>
+                <p>Tamil</p>
+                <p>Telugu</p>
+            </div>
+        </div>
+        <div>
+            <h4>Apps</h4>
+            <div>
+                <p>Android App On Google Play</p>
+                <p>Download on the App store</p>
+            </div>
+        </div>
+        <div>
+            <h4>Contact Information</h4>
+            <div>
+                <p>No. 20, Santhosh Nagar\n Chennai</p>
+            </div>
+        </div>
+    </footer>
+    <!-- Footer End -->
+    <script src="/static/js/script.js"></script>
+</body>
+</html>
