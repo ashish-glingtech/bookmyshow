@@ -81,20 +81,7 @@ class Otprest(Resource):
         db.session.add(result)
         db.session.commit()
         return Otplist()
-    # def reset_otp():
-    #     phone_number = request.args.get('phone_number')
-    #     print(phone_number)
-    #     new_otp = request.args.get('otp')
-    #     if phone_number is None or new_otp is None:
-    #         return 'User ID and new OTP value are required.', 400
-
-    #     otp = Otp.query.filter_by(phone_number=phone_number).first()
-    #     if otp is None:
-    #         return 'No OTP found for the specified user.', 404
-
-    #     otp.otp = new_otp
-    #     otp.timestamp = datetime.utcnow()
-    #     db.session.commit()
+    
 
 
 class Otpverify(Resource):
@@ -102,8 +89,6 @@ class Otpverify(Resource):
         data = request.get_json()
         phone_number = data.get('phone_number')
         otp = data.get('otp')
-
-        #user = Otp.query.filter_by(phone_number=phone_number).first()
         user = Otp.query.filter_by(phone_number=phone_number).order_by(Otp.timestamp.desc()).first()
         if not user:
             return {'message': 'User phone number not found.'}, 404
@@ -112,8 +97,7 @@ class Otpverify(Resource):
         if time.time() - user.timestamp > 120: # OTP is valid for 120 seconds
             return {'message': 'Otp expired'}, 401
         token = jwt.encode({'user_id': user.otp_id, 'phone_number': user.phone_number}, current_app.config["SECRET_KEY"])
-        # print(token)
-        #return {'token': token}, 200
+
         return {'message': 'Login successful.'}, 200
         
 #module of decorated
@@ -133,22 +117,6 @@ def token_required(f):
 
 
 class Login(Resource):
-    """def get_all_user(self, id):
-        users = User.query.all() 
-        result = []   
-        for user in users:   
-            user_data = {}   
-            user_data['id'] = user.id  
-            user_data['name'] = user.name 
-            user_data['gender'] = user.gender 
-            user_data['age'] = user.age 
-            user_data['email'] = user.email 
-            user_data['phone_no'] = user.phone_no 
-
-            result.append(user_data)   
-
-        return jsonify({'users': result})
-"""
     #@token_required
     def get(self, id):
        
@@ -158,25 +126,7 @@ class Login(Resource):
         return {'message': 'Welcome {}'.format(user.name)}
 
 
-# def create_login(resp):
-#     if resp.email is None or resp.email == "":
-#         return {'message': 'Invalid login. Please try again.'}, 401
-#     user = User.query.filter_by(email=resp.email).first()
-#     if user is not None:
-#         token = jwt.encode({"some": "user name"}, current_app.config["SECRET_KEY"], algorithm="HS256",)
-#         return {'token': token.decode('utf-8')}, 200
-#     return {'message': 'User not found'}, 401
 
-#Verify the token
-#class Verify(Resource):
-   # def post(self):
-        # token = jwt.encode({"some": "user name"}, current_app.config["SECRET_KEY"], algorithm="HS256",)
-        # print(token)
-        # try:
-        #     decoded_token = jwt.decode(token, current_app.config["SECRET_KEY"], algorithms=['HS256'])
-        #     return {'message': 'Token is valid'}, 200
-        # except:
-        #     return {'message': 'Invalid token'}, 401
         
 #User Module Are Here
 class Users(Resource):
@@ -360,7 +310,6 @@ class Paymentlist(Resource):
         return jsonify({"Payment":data})
 
     def post(self):
-        #data = request.get_json()
         data = payment_val.parse_args()
         
         payment = Payment(payment_type=data['payment_type'], booking_id=data['booking_id'],
@@ -394,9 +343,7 @@ class Actorlist(Resource):
                         })
         return jsonify({"Payment":data})
 
-    def post(self):
-        #data = request.get_json()
-        
+    def post(self):        
         data = actor_val.parse_args()
         if data.image:
             image=data.image
@@ -436,7 +383,7 @@ class Crewlist(Resource):
         return jsonify({"Payment":data})
 
     def post(self):
-        #data = request.get_json()
+       
         data = crew_val.parse_args()
         if data.image:
             image=data.image
