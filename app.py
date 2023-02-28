@@ -1,9 +1,11 @@
 from unittest import result
 from flask import Flask, request
 from flask import render_template
+from dotenv import load_dotenv
 import jwt
-from models import db
+from models import db 
 
+load_dotenv()
 UPLOAD_FOLDER = '/home/ankursingh/demo4/static/img'
 app = Flask(__name__)
 

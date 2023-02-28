@@ -21,8 +21,8 @@ def allowed_file(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Your Twilio account SID and Auth Token
-account_sid = "ACcd3cd99aacd0879d7f1067546ca30581"
-auth_token = "f6969a9cfcab89289eede0c56c253071"
+account_sid = os.environ['TWILIO_ACCOUNT_SID']
+auth_token = os.environ['TWILIO_AUTH_TOKEN']
 
 # Create a Twilio client
 client = Client(account_sid, auth_token)
