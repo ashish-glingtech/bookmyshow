@@ -68,4 +68,5 @@ crew_val.add_argument('movie_id', type=str, required=True, help="Enter a valid M
 
 #Otp Add Validation Api
 otp_val = reqparse.RequestParser()
+otp_val.add_argument('otp_id', type=int, required=False, help="nmbber  not  found", location='form')
 otp_val.add_argument('phone_number', type=int, required=True, help="Enter a valid Number", location='form')
