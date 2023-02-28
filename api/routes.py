@@ -1,6 +1,6 @@
 from flask import Blueprint
 from flask_restful import Resource, Api, request
-from .api import Users, Login, Movielist, Theaterlist, Screenlist, Bookinglist, Paymentlist, Image, Actorlist, Crewlist, Otplist, Otpverify
+from .api import Users, Login, Movielist, Theaterlist, Screenlist, Bookinglist, Paymentlist, Image, Actorlist, Crewlist, Otplist, Otpverify,Otprest
 
 
 # Blueprint Configuration
@@ -21,6 +21,7 @@ api.add_resource(Actorlist, '/actor/')
 api.add_resource(Crewlist, '/crew/')
 api.add_resource(Otplist, '/otp/')
 api.add_resource(Otpverify, '/otpverify/')
+api.add_resource(Otprest, '/reset')
 
 
 
