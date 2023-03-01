@@ -1,8 +1,7 @@
-from unittest import result
-from flask import Flask, request
-from flask import render_template
+import os
 from dotenv import load_dotenv
-import jwt
+from flask import Flask
+
 from models import db 
 
 load_dotenv()
@@ -13,7 +12,7 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = "myscretkey"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
-app.config['SQLALCHEMY_DATABASE_URI']= "mysql+pymysql://showApp:B00Kmy$how@127.0.0.1/bookmyshow"
+app.config['SQLALCHEMY_DATABASE_URI']= os.environ['MYSQL_CONNECTION_URL']
 
 db.init_app(app)
 with app.app_context():
