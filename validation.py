@@ -1,6 +1,17 @@
 from flask_restful import reqparse
 import werkzeug
 
+
+#user Add Validation Api
+user_val=reqparse.RequestParser()
+user_val.add_argument('name', type=str, required=True, help="enter a valid Name", location='form')
+user_val.add_argument('gender', type=str, required=True, help="enter a valid Gender",location='form')
+user_val.add_argument('age', type=int, required=True, help="enter a valid Age", location='form')
+user_val.add_argument('email', type=str, required=True, help="enter a valid email", location='form')
+user_val.add_argument('password', type=str, required=True, help="enter a valid password", location='form')
+user_val.add_argument('phone_no', type=int, required=True, help="enter a valid phone_no", location='form')
+
+
 #movies Add Validation Api
 parser = reqparse.RequestParser()
 parser.add_argument('id', type=int, required=False, help="enter a valid name", location='form')
@@ -31,7 +42,7 @@ screen_val.add_argument('total_seats', type=int, required=True, help="Enter a va
 
 #Booking Add Validation Api
 booking_val = reqparse.RequestParser()
-booking_val.add_argument('screen_id', type=str, required=True, help="Enter a valid Screen Id", location='form')
+booking_val.add_argument('screen_id', type=int, required=True, help="Enter a valid Screen Id", location='form')
 booking_val.add_argument('user_id', type=int, required=True, help="Enter a valid user Id", location='form')
 booking_val.add_argument('booking_no', type=str, required=True, help="Enter a valid Booking no", location='form')
 booking_val.add_argument('date', type=str, required=True, help="Enter a valid Date", location='form')

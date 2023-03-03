@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from flask import Flask
+from flask_migrate import Migrate
 
 from models import db 
 
@@ -14,13 +15,16 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 app.config['SQLALCHEMY_DATABASE_URI']= os.environ['MYSQL_CONNECTION_URL']
 
+
 db.init_app(app)
 with app.app_context():
     db.create_all()
 
+migrate = Migrate(app, db)
+
 # Register `api` Blueprints
 from api import routes as main_routes
-app.register_blueprint(main_routes.main_bp, url_prefix='/')
+app.register_blueprint(main_routes.main_bp, url_prefix='/api')
 
 
 # Register `view` blueprints

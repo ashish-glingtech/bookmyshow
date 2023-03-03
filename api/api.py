@@ -1,7 +1,7 @@
 from flask_restful import Resource, Api, request, reqparse
 from flask import jsonify, render_template, current_app #current_app import file in the app.py inside app.conig['secret_key'] 
 from models import db, User, Movie, Theater, Screen, Booking, Payment, Actor, Crew, Otp
-from validation import parser, theater1, screen_val, booking_val, payment_val, actor_val, crew_val, otp_val
+from validation import parser, theater1, screen_val, booking_val, payment_val, actor_val, crew_val, otp_val, user_val
 from datetime import datetime, timedelta
 import jwt
 from functools import wraps
@@ -28,7 +28,7 @@ auth_token = os.environ['TWILIO_AUTH_TOKEN']
 client = Client(account_sid, auth_token)
 
 
-class Otplist(Resource):
+class OtpSave(Resource):
     def post(self):
         data = otp_val.parse_args()
         otp_gen = ''.join(random.choices(string.digits, k=6))
@@ -69,7 +69,7 @@ class Otplist(Resource):
         db.session.commit()
         return "Verification code sent!", 200
 
-class Otprest(Resource):
+class OtpReset(Resource):
     def get(self):
         data = otp_val.parse_args()
         phone_number = data.get('phone_number')
@@ -83,8 +83,7 @@ class Otprest(Resource):
         return Otplist()
     
 
-
-class Otpverify(Resource):
+class OtpVerify(Resource):
     def post(self):
         data = request.get_json()
         phone_number = data.get('phone_number')
@@ -125,18 +124,16 @@ class Login(Resource):
             return {'message': 'User not found'}, 401
         return {'message': 'Welcome {}'.format(user.name)}
 
-
-
         
 #User Module Are Here
 class Users(Resource):
     def post(self):
-        body_data=request.get_json()
-
-        user=User(name=body_data['name'], gender=body_data['gender'], age=body_data['age'],
-                email=body_data['email'], phone_no=body_data['phone_no'], password=body_data['password'])
+        #body_data=request.get_json()
+        data = user_val.parse_args()
+        users=User(name=data['name'], gender=data['gender'], age=data['age'],
+                email=data['email'], phone_no=data['phone_no'], password=data['password'])
         
-        db.session.add(user)
+        db.session.add(users)
         db.session.commit()
         return jsonify({"message" : "User Add succesfull"})
 
@@ -154,8 +151,18 @@ class Image(Resource):
             file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
         return jsonify({'message' : 'File successfully uploaded'})
             
-class Movielist(Resource):
-    @token_required
+class MovieStore(Resource):
+    def post(self):
+        data = parser.parse_args()
+        
+        movie=Movie(name=data['name'], descr=data['descr'], duration=data['duration'],
+                    language=data['language'], movie_type=data['movie_type'], image=data['image'])
+        db.session.add(movie)
+        db.session.commit()
+        return jsonify({"message":"Movies Add succesfull"},)
+
+class MovieList(Resource):
+    #@token_required
     def get(self, id):
         movies = Movie.query.all()
         data = []
@@ -165,16 +172,7 @@ class Movielist(Resource):
                         "movie_type":movie.movie_type, "image":movie.image})
         return jsonify({"Movies":data})
 
-    def post(self):
-        data = parser.parse_args()
-        print(data)
-        
-        movie=Movie(name=data['name'], descr=data['descr'], duration=data['duration'],
-                    language=data['language'], movie_type=data['movie_type'], image=data['image'])
-        db.session.add(movie)
-        db.session.commit()
-        return jsonify({"message":"Movies Add succesfull"},)
-
+    
     def put(self,id):
         data =Movie.query.filter(Movie.name=="kgf").first()
         data.image = 'movie.jpg'
@@ -191,7 +189,16 @@ class Movielist(Resource):
 
 
 #Theater Module Are Here
-class Theaterlist(Resource):
+class TheaterStore(Resource):
+    def post(self):
+        data = theater1.parse_args()
+        theater=Theater(name=data['name'], location=data['location'], rating=data['rating'],
+                        phone_no=data['phone_no'])
+        db.session.add(theater)
+        db.session.commit()
+        return jsonify({"message" : "Theater Add succesfull"})
+
+class TheaterList(Resource):
     def get(self, id):
         theater = Theater.query.all()
         data = []
@@ -201,14 +208,7 @@ class Theaterlist(Resource):
                         })
         return jsonify({"Theater":data})
 
-    def post(self):
-        data = theater1.parse_args()
-        theater=Theater(name=data['name'], location=data['location'], rating=data['rating'],
-                        phone_no=data['phone_no'])
-        db.session.add(theater)
-        db.session.commit()
-        return jsonify({"message" : "Theater Add succesfull"})
-
+    
     def put(self,id):
         data =Theater.query.filter(Theater.name=="GIP").first()
         data.rating = '5 star'
@@ -225,7 +225,18 @@ class Theaterlist(Resource):
 
 
 #Screen Module Are Here
-class Screenlist(Resource):
+class ScreenStore(Resource):
+    def post(self):
+        
+        data = screen_val.parse_args()
+       
+        screen=Screen(name=data['name'], movie_id=data['movie_id'], theater_id=data['theater_id'],
+                      ticket_type=data['ticket_type'], total_seats=data['total_seats'])
+        db.session.add(screen)
+        db.session.commit()
+        return jsonify({"message" : "Screen Add succesfull"})
+
+class ScreenList(Resource):
 
     def get(self, id):
         screen = Screen.query.all()
@@ -237,16 +248,7 @@ class Screenlist(Resource):
                         })
         return jsonify({"Screen":data})
 
-    def post(self):
-        
-        data = screen_val.parse_args()
-       
-        screen=Screen(name=data['name'], movie_id=data['movie_id'], theater_id=data['theater_id'],
-                      ticket_type=data['ticket_type'], total_seats=data['total_seats'])
-        db.session.add(screen)
-        db.session.commit()
-        return jsonify({"message" : "Screen Add succesfull"})
-
+    
     def put(self,id):
         data =Screen.query.filter(Screen.id=="4").first()
         data.name = 'Audi2'
@@ -261,7 +263,17 @@ class Screenlist(Resource):
         return jsonify({"message":"Delete Screen succesfull"},)
 
 #Booking Module Are Here
-class Bookinglist(Resource):
+class BookingStore(Resource):
+    def post(self):
+        data = booking_val.parse_args()
+        booking=Booking(screen_id=data['screen_id'], user_id=data['user_id'], 
+                        booking_no=data['booking_no'], date=data['date'], start_time=data['start_time'],
+                        end_time=data['end_time'], payment=data['payment'], status=data['status'])
+        db.session.add(booking)
+        db.session.commit()
+        return jsonify({"message" : "Booking Add succesfull"})
+
+class BookingList(Resource):
 
     def get(self, id):
         booking = Booking.query.all()
@@ -274,17 +286,7 @@ class Bookinglist(Resource):
                         })
         return jsonify({"Booking":data})
 
-    def post(self):
-
-        data = booking_val.parse_args()
-
-        booking=Booking(screen_id=data['screen_id'], user_id=data['user_id'], 
-                        booking_no=data['booking_no'], date=data['date'], start_time=data['start_time'],
-                        end_time=data['end_time'], payment=data['payment'], status=data['status'])
-        db.session.add(booking)
-        db.session.commit()
-        return jsonify({"message" : "Booking Add succesfull"})
-
+    
     def put(self,id):
         data =Booking.query.filter(Booking.booking_no =="BO002").first()
         data.status  = 'Done'
@@ -299,7 +301,16 @@ class Bookinglist(Resource):
         return jsonify({"message":"Delete Booking succesfull"})
 
 #Payment Module Are Here
-class Paymentlist(Resource):
+class PaymentStore(Resource):
+    def post(self):
+        data = payment_val.parse_args()
+        payment = Payment(payment_type=data['payment_type'], booking_id=data['booking_id'],
+                          user_id=data['user_id'], amount=data['amount'], date=data['date'])
+        db.session.add(payment)
+        db.session.commit()
+        return jsonify({"message" : "Payment Add succesfull"})
+
+class PaymentList(Resource):
     def get(self, id):
         payment = Payment.query.all()
         data = []
@@ -309,19 +320,9 @@ class Paymentlist(Resource):
                         })
         return jsonify({"Payment":data})
 
-    def post(self):
-        data = payment_val.parse_args()
-        
-        payment = Payment(payment_type=data['payment_type'], booking_id=data['booking_id'],
-                          user_id=data['user_id'], amount=data['amount'], date=data['date'])
-        db.session.add(payment)
-        db.session.commit()
-        return jsonify({"message" : "Payment Add succesfull"})
-
-    
     def put(self,id):
-        data =Payment.query.filter(Payment.booking_id =="3").first()
-        data.amount  = '499'
+        data =Payment.query.filter(Payment.booking_id =="4").first()
+        data.amount  = '500'
         db.session.commit()
         return jsonify({"message":"update Payment succesfull"})
 
@@ -333,7 +334,20 @@ class Paymentlist(Resource):
         return jsonify({"message":"Delete Payment succesfull"})
 
 #Actor Module Are Here
-class Actorlist(Resource):
+class ActorStore(Resource):
+    def post(self):        
+        data = actor_val.parse_args()
+        if data.image:
+            image=data.image
+        image.save(os.path.join(current_app.config["UPLOAD_FOLDER"], secure_filename(image.filename)))
+        actor = Actor(name=data['name'], image=data['image'],
+                actor_type=data['actor_type'], movie_id=data['movie_id'])
+                          
+        db.session.add(actor)
+        db.session.commit()
+        return jsonify({"message" : "Actor Add succesfull"})
+
+class ActorList(Resource):
     def get(self, id):
         actor = Actor.query.all()
         data = []
@@ -347,7 +361,6 @@ class Actorlist(Resource):
         data = actor_val.parse_args()
         if data.image:
             image=data.image
-            print(image)
         image.save(os.path.join(current_app.config["UPLOAD_FOLDER"], secure_filename(image.filename)))
         actor = Actor(name=data['name'], image=data['image'],
                           actor_type=data['actor_type'], movie_id=data['movie_id'])
@@ -372,16 +385,7 @@ class Actorlist(Resource):
 
 
 #Crew Module Are Here
-class Crewlist(Resource):
-    def get(self, id):
-        crew = Crew.query.all()
-        data = [] 
-        for crew in crew:
-            data.append({"id":crew.id, "name": crew.name, "image": crew.image,
-                        "crew_type":crew.crew_type, "movie_id":crew.movie_id,
-                        })
-        return jsonify({"Payment":data})
-
+class CrewStore(Resource):
     def post(self):
        
         data = crew_val.parse_args()
@@ -395,6 +399,17 @@ class Crewlist(Resource):
         db.session.commit()
         return jsonify({"message" : "Crew Add succesfull"})
 
+class CrewList(Resource):
+    def get(self, id):
+        crew = Crew.query.all()
+        data = [] 
+        for crew in crew:
+            data.append({"id":crew.id, "name": crew.name, "image": crew.image,
+                        "crew_type":crew.crew_type, "movie_id":crew.movie_id,
+                        })
+        return jsonify({"Payment":data})
+
+    
     def put(self,id):
         data =Crew.query.filter(Crew.id =="1").first()
         data.name  = 'Bosco Caeser'
