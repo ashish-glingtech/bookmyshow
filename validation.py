@@ -1,23 +1,34 @@
 from flask_restful import reqparse
 import werkzeug
 
+
+#user Add Validation Api
+user_val=reqparse.RequestParser()
+user_val.add_argument('name', type=str, required=True, help="Enter a valid Name", location='form')
+user_val.add_argument('gender', type=str, required=True, help="Enter a valid Gender",location='form')
+user_val.add_argument('age', type=int, required=True, help="Enter a valid Age", location='form')
+user_val.add_argument('email', type=str, required=True, help="Enter a valid Email", location='form')
+user_val.add_argument('password', type=str, required=True, help="Enter a valid Password", location='form')
+user_val.add_argument('phone_no', type=int, required=True, help="Enter a valid Phone no", location='form')
+
+
 #movies Add Validation Api
 parser = reqparse.RequestParser()
-parser.add_argument('id', type=int, required=False, help="enter a valid name", location='form')
-parser.add_argument('name', type=str, required=True, help="enter a valid name", location='form')
-parser.add_argument('descr', type=str, required=True, help="enter a valid descrtion", location='form')
-parser.add_argument('duration', type=str, required=True, help="enter a valid duration", location='form')
-parser.add_argument('language', type=str, required=True, help="enter a valid language", location='form')
-parser.add_argument('movie_type', type=str, required=True, help="enter a valid movie type", location='form')
-parser.add_argument('image', type=werkzeug.datastructures.FileStorage, required=True, help="enter a valid image", location='files')
+parser.add_argument('id', type=int, required=False, help="Enter a valid Number", location='form')
+parser.add_argument('name', type=str, required=True, help="Enter a valid Name", location='form')
+parser.add_argument('descr', type=str, required=True, help="Enter a valid Descrtion", location='form')
+parser.add_argument('duration', type=str, required=True, help="Enter a valid Duration", location='form')
+parser.add_argument('language', type=str, required=True, help="Enter a valid Language", location='form')
+parser.add_argument('movie_type', type=str, required=True, help="Enter a valid Movie Type", location='form')
+parser.add_argument('image', type=werkzeug.datastructures.FileStorage, required=True, help="Enter a valid Image", location='files')
 
 
 #theater Add Validation Api
 theater1 = reqparse.RequestParser()
-theater1.add_argument('name', type=str, required=True, help="enter a valid name", location='form')
-theater1.add_argument('location', type=str, required=True, help="enter a valid location",location='form')
-theater1.add_argument('rating', type=str, required=True, help="enter a valid rating", location='form')
-theater1.add_argument('phone_no', type=int, required=True, help="enter a valid phone_no", location='form')
+theater1.add_argument('name', type=str, required=True, help="Enter a valid Name", location='form')
+theater1.add_argument('location', type=str, required=True, help="Enter a valid Location",location='form')
+theater1.add_argument('rating', type=str, required=True, help="Enter a valid Rating", location='form')
+theater1.add_argument('phone_no', type=int, required=True, help="Enter a valid Phone No", location='form')
 
 
 #Screen Add Validation Api
@@ -31,7 +42,7 @@ screen_val.add_argument('total_seats', type=int, required=True, help="Enter a va
 
 #Booking Add Validation Api
 booking_val = reqparse.RequestParser()
-booking_val.add_argument('screen_id', type=str, required=True, help="Enter a valid Screen Id", location='form')
+booking_val.add_argument('screen_id', type=int, required=True, help="Enter a valid Screen Id", location='form')
 booking_val.add_argument('user_id', type=int, required=True, help="Enter a valid user Id", location='form')
 booking_val.add_argument('booking_no', type=str, required=True, help="Enter a valid Booking no", location='form')
 booking_val.add_argument('date', type=str, required=True, help="Enter a valid Date", location='form')
@@ -68,5 +79,5 @@ crew_val.add_argument('movie_id', type=str, required=True, help="Enter a valid M
 
 #Otp Add Validation Api
 otp_val = reqparse.RequestParser()
-otp_val.add_argument('otp_id', type=int, required=False, help="nmbber  not  found", location='form')
+otp_val.add_argument('otp_id', type=int, required=False, help="Number  not  found", location='form')
 otp_val.add_argument('phone_number', type=int, required=True, help="Enter a valid Number", location='form')
